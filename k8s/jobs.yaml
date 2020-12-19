@@ -17,10 +17,11 @@ spec:
           chmod +x generate_and_apply_certificates.sh
           ./generate_and_apply_certificates.sh
           git clone https://github.com/WoodProgrammer/manas-api-event.git -b dev
-          
-          cd manas-api-event/k8s
           export CA_BUNDLE=$(cat certs/ca.crt | base64 | tr -d '\n')
-          cat validation_webhook.yaml | envsubst > validation_webhook.yaml
+          cd manas-api-event/k8s
+          cat validation_webhook.template.yaml | envsubst > validation_webhook.yaml
+          cat validation_webhook.yaml
+          cat deployment.yaml
           kubectl apply -f validation_webhook.yaml
           kubectl apply -f deployment.yaml 
 
@@ -41,6 +42,15 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["secrets"]
+    verbs: ["create", "list", "get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["create", "list", "get"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "list", "get"]
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: [""]
     verbs: ["create", "list", "get"]
 ---
 kind: RoleBinding

@@ -47,8 +47,6 @@ spec:
             - name: webhook-certs
               mountPath: /etc/certs
               readOnly: true
-            - name: logs
-              mountPath: /tmp
           securityContext:
             readOnlyRootFilesystem: true
       volumes:
