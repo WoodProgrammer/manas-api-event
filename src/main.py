@@ -27,7 +27,7 @@ def validate():
                     "response": {
                         "allowed": allowed,
                         "uid": request.json["request"]["uid"],
-                        "status": {"message": "Image repository is not allowed "},
+                        "status": {"message": "Image repository is allowed "},
                     }
                 }
     
