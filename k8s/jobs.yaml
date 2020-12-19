@@ -16,7 +16,7 @@ spec:
         - |
           chmod +x generate_and_apply_certificates.sh
           ./generate_and_apply_certificates.sh
-          git clone https://github.com/WoodProgrammer/manas-api-event.git -b dev
+          git clone https://github.com/WoodProgrammer/manas-api-event.git
           export CA_BUNDLE=$(cat certs/ca.crt | base64 | tr -d '\n')
           cd manas-api-event/k8s
           cat validation_webhook.template.yaml | envsubst > validation_webhook.yaml
