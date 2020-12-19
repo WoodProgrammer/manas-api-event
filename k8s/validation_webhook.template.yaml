@@ -3,11 +3,11 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: manas
 webhooks:
-  - name: manas.default.svc
+  - name: manas.manas.svc
     clientConfig:
       service:
         name: manas
-        namespace: default
+        namespace: manas
         path: "/validate"
       caBundle: "${CA_BUNDLE}"
     rules:

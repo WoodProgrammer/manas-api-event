@@ -34,7 +34,7 @@ metadata:
   name: manas-controller-sa
   namespace: manas
 ---
-kind: Role
+kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: manas
@@ -45,15 +45,15 @@ rules:
     verbs: ["create", "list", "get"]
   - apiGroups: ["apps"]
     resources: ["deployments"]
-    verbs: ["create", "list", "get"]
+    verbs: ["create", "list", "get", "patch", "update"]
   - apiGroups: [""]
     resources: ["services"]
     verbs: ["create", "list", "get"]
   - apiGroups: ["admissionregistration.k8s.io"]
-    resources: [""]
-    verbs: ["create", "list", "get"]
+    resources: ["validatingwebhookconfigurations"]
+    verbs: ["create", "list", "get", "update"]
 ---
-kind: RoleBinding
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: manas-controller-rolebinding
@@ -63,6 +63,6 @@ subjects:
     name: manas-controller-sa
     namespace: manas
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: manas-controller-role
   apiGroup: rbac.authorization.k8s.io
