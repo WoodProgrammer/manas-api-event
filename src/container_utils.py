@@ -15,3 +15,7 @@ def check_image(image_name, allowed_list):
         return False
 
     return status
+
+def get_allowed_list():
+
+    return os.environ["ALLOWED_REGISTRY_LIST"].split(",")
