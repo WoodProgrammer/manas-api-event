@@ -38,18 +38,24 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              memory: 50Mi
+              memory: 200Mi
               cpu: 300m
             requests:
-              memory: 00Mi
+              memory: 50Mi
               cpu: 300m
           volumeMounts:
             - name: webhook-certs
               mountPath: /etc/certs
               readOnly: true
+            - name: allowed-repo-list
+              mountPath: /opt/allowed.repo_list
+              subPath: allowed.repo_list
           securityContext:
             readOnlyRootFilesystem: true
       volumes:
         - name: webhook-certs
           secret:
             secretName: manas
+        - name: allowed-repo-list
+          configMap:
+            name: manas-allowed-repo-list

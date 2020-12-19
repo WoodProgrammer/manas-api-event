@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: manas-allowed-repo-list
+  namespace: manas
+data:
+  allowed.repo_list: |
+    quay.io
+    myown_repo.com

@@ -17,5 +17,7 @@ def check_image(image_name, allowed_list):
     return status
 
 def get_allowed_list():
+    repos = open("/opt/allowed.repo_list", "r")
+    repo_list = repos.read().splitlines()
+    return list(repo_list)
 
-    return os.environ["ALLOWED_REGISTRY_LIST"].split(",")
