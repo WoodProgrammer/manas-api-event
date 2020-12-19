@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-pod
+  namespace: manas
+spec:
+  template:
+    spec:
+      serviceAccountName: manas-cert-sa
+      containers:
+      - name: cert-generator
+        image: emirozbir/cert-manager-webhook:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          chmod +x generate_and_apply_certificates.sh
+          ./generate_and_apply_certificates.sh
+      restartPolicy: Never
+  backoffLimit: 4
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: manas-cert-sa
+  namespace: manas
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: manas
+  name: manas-cert-role
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "list", "get"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: manas-cert-rolebinding
+  namespace: manas
+subjects:
+  - kind: ServiceAccount
+    name: manas-cert-sa
+    namespace: manas
+roleRef:
+  kind: Role
+  name: manas-cert-role
+  apiGroup: rbac.authorization.k8s.io
