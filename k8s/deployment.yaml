@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: manas
+  namespace: manas
+  labels:
+    name: manas
+spec:
+  ports:
+  - name: webhook
+    port: 443
+    targetPort: 5000
+  selector:
+    name: manas 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manas
+  namespace: manas
+  labels:
+    name: manas
+spec:
+  selector:
+    matchLabels:
+      name: manas
+  replicas: 1
+  template:
+    metadata:
+      name: manas 
+      labels:
+        name: manas
+    spec:
+      containers:
+        - name: webhook
+          image: emirozbir/k8s-webhook:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 50Mi
+              cpu: 300m
+            requests:
+              memory: 00Mi
+              cpu: 300m
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /etc/certs
+              readOnly: true
+            - name: logs
+              mountPath: /tmp
+          securityContext:
+            readOnlyRootFilesystem: true
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: manas

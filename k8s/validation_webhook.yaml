@@ -1,0 +1,21 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: manas
+webhooks:
+  - name: manas.default.svc
+    clientConfig:
+      service:
+        name: manas
+        namespace: default
+        path: "/validate"
+      caBundle: "${CA_BUNDLE}"
+    rules:
+      - operations: ["CREATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+      - operations: ["CREATE"]
+        apiGroups: [""]
+        apiVersions: ["apps/v1"]
+        resources: ["deployment"]
