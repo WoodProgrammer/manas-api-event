@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: manas-controller
+  namespace: manas
+spec:
+  template:
+    spec:
+      serviceAccountName: manas-controller-sa
+      containers:
+      - name: manas-controller
+        image: emirozbir/cert-manager-webhook:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          chmod +x generate_and_apply_certificates.sh
+          ./generate_and_apply_certificates.sh
+          git clone https://github.com/WoodProgrammer/manas-api-event.git -b dev
+          export CA_BUNDLE=$(cat certs/ca.crt | base64 | tr -d '\n')
+          cd manas-api-event/k8s
+          cat validation_webhook.template.yaml | envsubst > validation_webhook.yaml
+          cat validation_webhook.yaml
+          cat deployment.yaml
+          kubectl apply -f validation_webhook.yaml
+          kubectl apply -f deployment.yaml 
+
+      restartPolicy: Never
+  backoffLimit: 4
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: manas-controller-sa
+  namespace: manas
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: manas
+  name: manas-controller-role
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "list", "get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["create", "list", "get", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "list", "get"]
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations"]
+    verbs: ["create", "list", "get", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: manas-controller-rolebinding
+  namespace: manas
+subjects:
+  - kind: ServiceAccount
+    name: manas-controller-sa
+    namespace: manas
+roleRef:
+  kind: ClusterRole
+  name: manas-controller-role
+  apiGroup: rbac.authorization.k8s.io
