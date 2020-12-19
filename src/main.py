@@ -11,8 +11,8 @@ app = Flask(__name__)
 def validate():
     allowed = True
     allowed_list = get_allowed_list()
-    print(request.json)
-    image = request.json["request"]["object"]["spec"]["containers"]["image"]
+
+    image = request.json["request"]["object"]["spec"]["containers"][0]["image"]
     is_allowed = check_image(image, allowed_list)
 
     if is_allowed == False:
