@@ -1,23 +1,18 @@
-import os
 import logging
 
+
 def check_image(image_name, allowed_list):
-    status = False
     try:
         split_str = image_name.split("/")
-        for repos in allowed_list:
-            if repos in split_str[0]:
-                status = True
-                break
-
+        status = any(map(lambda x: x in split_str[0], allowed_list))
     except Exception as exp:
-        logger.warning(exp)
+        logging.warning(exp)
         return False
-
     return status
 
+
 def get_allowed_list():
-    repos = open("/opt/allowed.repo_list", "r")
-    repo_list = repos.read().splitlines()
+    with open("/opt/allowed.repo_list", "r") as repos:
+        repo_list = repos.read().splitlines()
     return list(repo_list)
 
